@@ -1,0 +1,20 @@
+{
+    "name": "rerootagency/es-php",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Domagoj Šimić",
+            "email": "domagoj.simic.reroot@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "elasticsearch/elasticsearch": "^7.3"
+    },
+    "autoload": {
+      "psr-4": {
+        "RerootAgency\\Elasticsearch\\": "src/"
+      }
+    }
+}
