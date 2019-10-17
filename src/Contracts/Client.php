@@ -1,6 +1,8 @@
 <?php
 namespace RerootAgency\Elasticsearch\Contracts;
 
+use Elasticsearch\Client as BaseClient;
+
 abstract class Client
 {
     /**
@@ -20,7 +22,7 @@ abstract class Client
     /**
      * Elasticsearch base client
      *
-     * @var mixed
+     * @var BaseClient
      */
     protected $client;
 
@@ -29,7 +31,7 @@ abstract class Client
      *
      * @return mixed
      */
-    public function client()
+    public function client(): BaseClient
     {
         return $this->client;
     }

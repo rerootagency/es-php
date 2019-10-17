@@ -1,14 +1,16 @@
 <?php
 namespace RerootAgency\Elasticsearch\Contracts;
 
+use Elasticsearch\Client as BaseClient;
+
 interface ClientInterface
 {
     /**
-     * Expose underlying client
+     * Elasticsearch base client
      *
-     * @return mixed
+     * @var BaseClient
      */
-    public function client();
+    public function client(): BaseClient;
 
     /**
      * Build Index

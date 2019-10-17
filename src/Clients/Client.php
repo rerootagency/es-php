@@ -21,8 +21,8 @@ class Client extends BaseClient implements ClientInterface
      * @param string $scheme
      */
     public function __construct(
-        $host = 'localhost',
-        $port = 9200,
+        $host,
+        $port,
         $path = '',
         $user = '',
         $pass = '',
