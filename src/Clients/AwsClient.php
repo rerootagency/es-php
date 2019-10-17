@@ -1,12 +1,13 @@
 <?php
 namespace RerootAgency\Elasticsearch\Clients;
 
+use Aws\Credentials\CredentialProvider;
 use Aws\Credentials\Credentials;
+use Aws\ElasticsearchService\ElasticsearchPhpHandler;
 use Aws\Signature\SignatureV4;
 use RerootAgency\Elasticsearch\Contracts\Client as BaseClient;
 use RerootAgency\Elasticsearch\Contracts\ClientInterface;
 use Elasticsearch\ClientBuilder;
-use Wizacha\Middleware\AwsSignatureMiddleware;
 
 /**
  * Simple wrapper class around Aws Elasticsearch Client
@@ -30,7 +31,7 @@ class AwsClient extends BaseClient implements ClientInterface
     protected $client;
 
     public function __construct(
-        $aws_id,
+        $aws_key,
         $aws_secret,
         $aws_region,
         $host,
@@ -40,13 +41,6 @@ class AwsClient extends BaseClient implements ClientInterface
         $pass = '',
         $scheme = 'http'
     ) {
-        $credentials = new Credentials($aws_id, $aws_secret);
-        $signature = new SignatureV4('es', $aws_region);
-
-        $middleware = new AwsSignatureMiddleware($credentials, $signature);
-        $defaultHandler = ClientBuilder::defaultHandler();
-        $awsHandler = $middleware($defaultHandler);
-
         $conf = [
             'host' => $host,
             'port' => $port,
@@ -60,8 +54,14 @@ class AwsClient extends BaseClient implements ClientInterface
             $conf['pass'] = $pass;
         }
 
-        return ClientBuilder::create()
-            ->setHandler($awsHandler)
+        $provider = CredentialProvider::fromCredentials(
+            new Credentials($aws_key, $aws_secret)
+        );
+
+        $handler = new ElasticsearchPhpHandler($aws_region, $provider);
+
+        $this->client = ClientBuilder::create()
+            ->setHandler($handler)
             ->setHosts([$conf])
             ->build();
     }
