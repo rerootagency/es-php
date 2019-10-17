@@ -1,14 +1,7 @@
 <?php
-namespace RerootAgency\Elasticsearch;
+namespace RerootAgency\Elasticsearch\Contracts;
 
-use RerootAgency\Elasticsearch\Contracts\ElasticsearchIndex;
-use Elasticsearch\Client as BaseClient;
-use Elasticsearch\ClientBuilder;
-
-/**
- * Simple wrapper class around Elasticsearch\Client
- */
-class Client
+abstract class Client
 {
     /**
      * Index parameter
@@ -25,54 +18,18 @@ class Client
     protected $body = [];
 
     /**
-     * ElasticSearch\Client instance
+     * Elasticsearch base client
      *
-     * @var BaseClient
+     * @var mixed
      */
     protected $client;
 
     /**
-     * Constructor
-     *
-     * @param string $host
-     * @param string|int $port
-     * @param string $path
-     * @param string $user
-     * @param string $pass
-     * @param string $scheme
-     */
-    public function __construct(
-        $host = 'localhost',
-        $port = 9200,
-        $path = '',
-        $user = '',
-        $pass = '',
-        $scheme = 'http'
-    ) {
-        $conf = [
-            'host' => $host,
-            'port' => $port,
-            'scheme' => $scheme,
-        ];
-
-        if(!empty($path)) $conf['path'] = $path;
-
-        if(!empty($user)) {
-            $conf['user'] = $user;
-            $conf['pass'] = $pass;
-        }
-
-        $this->client = ClientBuilder::create()
-            ->setHosts([$conf])
-            ->build();
-    }
-
-    /**
      * Expose underlying client
      *
-     * @return BaseClient
+     * @return mixed
      */
-    public function client(): BaseClient
+    public function client()
     {
         return $this->client;
     }
@@ -379,7 +336,7 @@ class Client
      * @param string $index_class
      * @return ElasticSearch
      */
-    public function setIndexClass(string $index_class): Client
+    public function setIndexClass(string $index_class): ClientInterface
     {
         $this->check($index_class);
 
@@ -396,7 +353,7 @@ class Client
      * @param string $operator
      * @return ElasticSearch
      */
-    public function where(string $key, string $value, $operator = '='): Client
+    public function where(string $key, string $value, $operator = '='): ClientInterface
     {
         switch ($operator) {
             case '=':
@@ -473,7 +430,7 @@ class Client
         string $key,
         array $values,
         bool $match_values = true
-    ): Client {
+    ): ClientInterface {
         if($match_values) {
             $this->body['bool']['must'][] = [
                 'terms' => [
@@ -498,7 +455,7 @@ class Client
      * @param integer $skip
      * @return ElasticSearch
      */
-    public function limit(int $limit, int $skip = 0): Client
+    public function limit(int $limit, int $skip = 0): ClientInterface
     {
         $this->body['from'] = $skip;
         $this->body['size'] = $limit;
@@ -514,7 +471,7 @@ class Client
      * @param string $sort_order
      * @return ElasticSearch
      */
-    public function sortBy(string $key, string $sort_order = 'asc'): Client
+    public function sortBy(string $key, string $sort_order = 'asc'): ClientInterface
     {
         $sort_order = strtolower($sort_order);
 
@@ -537,7 +494,7 @@ class Client
      * @param Callable|Other $data
      * @return ElasticSearch
      */
-    public function search($data): Client
+    public function search($data): ClientInterface
     {
         if(is_callable($data)) {
             $this->body = $data($this->body);
