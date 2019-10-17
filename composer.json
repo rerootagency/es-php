@@ -2,6 +2,7 @@
     "name": "rerootagency/es-php",
     "type": "library",
     "license": "MIT",
+    "description": "Wrapper around elasticsearch-php official client.",
     "authors": [
         {
             "name": "Domagoj Šimić",

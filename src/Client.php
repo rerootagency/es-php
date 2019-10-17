@@ -31,11 +31,50 @@ class Client
      */
     protected $client;
 
-    public function __construct($host, $port)
-    {
+    /**
+     * Constructor
+     *
+     * @param string $host
+     * @param string|int $port
+     * @param string $path
+     * @param string $user
+     * @param string $pass
+     * @param string $scheme
+     */
+    public function __construct(
+        $host = 'localhost',
+        $port = 9200,
+        $path = '',
+        $user = '',
+        $pass = '',
+        $scheme = 'http'
+    ) {
+        $conf = [
+            'host' => $host,
+            'port' => $port,
+            'scheme' => $scheme,
+        ];
+
+        if(!empty($path)) $conf['path'] = $path;
+
+        if(!empty($user)) {
+            $conf['user'] = $user;
+            $conf['pass'] = $pass;
+        }
+
         $this->client = ClientBuilder::create()
-            ->setHosts([$host.':'.$port])
+            ->setHosts([$conf])
             ->build();
+    }
+
+    /**
+     * Expose underlying client
+     *
+     * @return BaseClient
+     */
+    public function client(): BaseClient
+    {
+        return $this->client;
     }
 
     /**
